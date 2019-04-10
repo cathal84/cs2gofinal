@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, session, redirect, url_fo
 from werkzeug.utils import secure_filename
 from cs2go.models import User, File, School, Module1, Module2, Module3
 from cs2go import app
+import sys
 
 from cs2go.files.forms import UploadForm, TagForm
 import os
@@ -20,10 +21,11 @@ def upload():
         user = User.objects().filter(email=session.get('email')).first()
 
         if request.method == 'POST':
+            MYDIR = os.path.dirname(__file__)
             file = form.file.data
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                file.save(os.path.join(MYDIR + "/" + app.config['UPLOAD_FOLDER'], filename))
                 # save the file name in the database
                 new_file = File()
                 new_file.filename = filename
